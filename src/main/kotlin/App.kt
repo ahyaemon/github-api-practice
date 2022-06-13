@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.kittinunf.fuel.httpGet
+import kotlin.system.exitProcess
 
 private val baseUrl = "https://api.github.com"
 
@@ -25,9 +26,16 @@ data class Response(
   val count: Long,
 )
 
+private val badRequest = Response(status = 400, count = 0)
+
 private val mapper = jacksonObjectMapper()
 
 fun main(args: Array<String>) {
+  if (args.isEmpty()) {
+    println(badRequest)
+    exitProcess(-1)
+  }
+
   val userName = args[0]
 
   val userJson = ("$baseUrl/users/$userName").httpGet().response().second.data
